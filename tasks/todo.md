@@ -36,14 +36,44 @@ Known limitation: a project nested inside a detected root is not separately
 surfaced (add-to-app, plugin example), a consequence of prune-on-detect; revisit
 if needed. Next: Milestone 2 (guided build lifecycle).
 
-## Milestone 2: guided build lifecycle
+## Milestone 2: guided build lifecycle (in progress)
 
-- [ ] `driver` lifecycle contract; Flutter driver first (deps, analyze, test, build)
-- [ ] Interactive TUI (Charm/Bubble Tea); unified error surfacing
-- [ ] Android, iOS, React Native drivers
+- [x] `driver` lifecycle contract (Phase, Status, Step, BuildOptions, Driver) + registry
+- [x] Drivers: Flutter, React Native, Android, iOS, plus Swift and Kotlin/JVM (pulled forward)
+- [x] `--flavor` threaded through build and test steps
+- [x] Detection refinement: Gradle is not always Android, `Package.swift` is Swift, plus Swift and Kotlin stacks
+- [x] `internal/pipeline` runner: exec streaming, exit codes, classify, artifacts, fail-fast
+- [x] `internal/tui`: Bubble Tea view + plain non-TTY renderer
+- [x] `anvil build` command (`--path`, `--target`, `--flavor`, `--release`, `--dry-run`, `--plain`)
+- [x] Tests: driver Steps, runner via subprocess helper, plain renderer; `./check` green
+- [ ] PR into develop, CI green
 
-## Milestone 3: signing and upload
+### Review, Milestone 2
+Build lifecycle works end to end. `anvil build` detects the project, picks the
+driver, and runs deps, analyze, test, build with a live TUI or a plain CI
+renderer. Verified: dry-run and flavor wiring on ca-mobile, the runner via a real
+subprocess (streaming, exit codes, fail-fast), and the no-project error path.
+Signing and store upload remain for Milestones 3 and 4. iOS scheme is derived by
+convention (or `--flavor`); auto-detecting flavors and schemes is a later step.
 
-- [ ] Guided Android keystore and iOS provisioning/signing
+## Milestone 3: signing (in progress)
+
+- [x] Sign phase in the driver contract; iOS sign steps on Flutter, RN, and native iOS
+- [x] `internal/sign`: keytool keystore generation, key.properties, Gradle wiring, ExportOptions.plist, gitignore
+- [x] `anvil sign` and `anvil build --sign`; `--dry-run` makes no changes
+- [x] Secrets via prompt or env (huh), never committed
+- [x] Tests: live keystore gen (keytool), gradle wiring idempotence, gitignore, ExportOptions, Step argv
+- [ ] PR into develop, CI green
+
+### Review, Milestone 3
+Android signs at build time via wired Gradle signingConfigs; iOS archives and
+exports a signed ipa. Guided setup is side-effect-free under --dry-run (a bug
+caught in review after it briefly wrote into a real project, now fixed and the
+project restored). Deferred: App Store export, App Store Connect API and
+fastlane match, OS keychain, Play enrollment, and Android apksigner for a loose
+prebuilt APK.
+
+## Milestone 4: upload
+
 - [ ] Store/registry upload (TestFlight, Play, npm)
 - [ ] GoReleaser to Homebrew/Scoop/curl distribution

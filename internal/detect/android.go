@@ -3,21 +3,17 @@ package detect
 import "path/filepath"
 
 func detectAndroid(dir string) *Project {
-	hasSettings := fileExists(filepath.Join(dir, "settings.gradle")) ||
-		fileExists(filepath.Join(dir, "settings.gradle.kts"))
-	hasBuild := fileExists(filepath.Join(dir, "build.gradle")) ||
-		fileExists(filepath.Join(dir, "build.gradle.kts"))
-	if !hasSettings && !hasBuild {
+	if !hasGradleFiles(dir) {
+		return nil
+	}
+	isApp := gradleContains(dir, "com.android.application")
+	isLibrary := gradleContains(dir, "com.android.library")
+	if !isApp && !isLibrary {
 		return nil
 	}
 
-	confidence := 0.6
-	if hasSettings {
-		confidence = 0.9
-	}
-
 	subtype := "library"
-	if gradleContains(dir, "com.android.application") {
+	if isApp {
 		subtype = "app"
 	}
 
@@ -27,22 +23,30 @@ func detectAndroid(dir string) *Project {
 		flags = append(flags, "kmp")
 	}
 
-	return &Project{Path: dir, Stack: Android, Subtype: subtype, Confidence: confidence, Flags: flags}
+	return &Project{Path: dir, Stack: Android, Subtype: subtype, Confidence: 0.9, Flags: flags}
+}
+
+func hasGradleFiles(dir string) bool {
+	for _, n := range []string{"settings.gradle", "settings.gradle.kts", "build.gradle", "build.gradle.kts"} {
+		if fileExists(filepath.Join(dir, n)) {
+			return true
+		}
+	}
+	return false
 }
 
 // gradleContains scans the build files at dir and in its immediate submodules
-// for a token, covering the common case where the application plugin lives in an
-// app/ module rather than the root build file.
+// for a token, covering the common case where a plugin lives in a submodule
+// (for example an app/ or androidApp/ module) rather than the root build file.
 func gradleContains(dir, token string) bool {
 	candidates := []string{
 		filepath.Join(dir, "build.gradle"),
 		filepath.Join(dir, "build.gradle.kts"),
 	}
-	if entries, err := filepath.Glob(filepath.Join(dir, "*", "build.gradle")); err == nil {
-		candidates = append(candidates, entries...)
-	}
-	if entries, err := filepath.Glob(filepath.Join(dir, "*", "build.gradle.kts")); err == nil {
-		candidates = append(candidates, entries...)
+	for _, pat := range []string{"*/build.gradle", "*/build.gradle.kts"} {
+		if entries, err := filepath.Glob(filepath.Join(dir, pat)); err == nil {
+			candidates = append(candidates, entries...)
+		}
 	}
 	for _, c := range candidates {
 		if fileContains(c, token) {

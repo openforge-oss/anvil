@@ -6,11 +6,14 @@ High-level phases and status, for monitoring. Granular tasks live in
 | Phase | What | Status |
 |-------|------|--------|
 | 0. Repo and pipeline | Go skeleton, wrapper scripts, Claude hooks, CI, docs, working rules | done |
-| 1. Detection | Marker-file detectors for Flutter, React Native, Android, iOS; `anvil detect` | in progress |
-| 2. Guided build | Driver lifecycle (deps, analyze, test, build); Flutter first, then RN, Android, iOS; interactive TUI; unified error surfacing | planned |
-| 3. Signing | Guided Android keystore and iOS provisioning/signing | planned |
+| 1. Detection | Marker-file detectors for Flutter, React Native, Android, iOS, Swift, Kotlin; `anvil detect` | done |
+| 2. Guided build | Driver lifecycle (deps, analyze, test, build) for all six stacks; `--flavor`; interactive TUI plus plain fallback; `anvil build` | in progress |
+| 3. Signing | Guided Android keystore and iOS provisioning/signing | in progress |
 | 4. Upload | TestFlight, Play, npm upload; GoReleaser distribution (Homebrew, Scoop, curl) | planned |
-| 5. Breadth | More ecosystems (web, Go) via new drivers; `--explain` educational mode | future |
+| 5. Breadth | More ecosystems (web, Go) via new drivers; flavor auto-detection; `--explain` educational mode | future |
+
+Swift (SPM) and Kotlin/JVM drivers and `--flavor` were pulled forward into
+Milestone 2.
 
 ## Guiding decisions (locked)
 

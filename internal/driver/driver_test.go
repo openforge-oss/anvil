@@ -121,6 +121,35 @@ func TestIOSSteps(t *testing.T) {
 	}
 }
 
+func TestFlutterSignSteps(t *testing.T) {
+	d := Flutter{}
+	if _, ok := d.Steps(Sign, BuildOptions{}); ok {
+		t.Error("flutter sign without an export plist should be skipped")
+	}
+	wantCmds(t, mustSteps(t, d, Sign, BuildOptions{Signing: Signing{ExportPlist: "ExportOptions.plist"}}),
+		"flutter build ipa --export-options-plist ExportOptions.plist")
+}
+
+func TestIOSSignSteps(t *testing.T) {
+	root := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(root, "App.xcworkspace"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	d := IOS{base{root}}
+	steps := mustSteps(t, d, Sign, BuildOptions{Signing: Signing{TeamID: "T123", ExportPlist: "ExportOptions.plist"}})
+	if len(steps) != 2 {
+		t.Fatalf("want 2 steps, got %d", len(steps))
+	}
+	arch := strings.Join(steps[0].Argv, " ")
+	if !strings.Contains(arch, "archive") || !strings.Contains(arch, "DEVELOPMENT_TEAM=T123") || !strings.Contains(arch, "-scheme App") {
+		t.Errorf("archive step: %s", arch)
+	}
+	exp := strings.Join(steps[1].Argv, " ")
+	if !strings.Contains(exp, "-exportArchive") || !strings.Contains(exp, "-exportOptionsPlist ExportOptions.plist") {
+		t.Errorf("export step: %s", exp)
+	}
+}
+
 func writeFiles(t *testing.T, root string, files map[string]string) {
 	t.Helper()
 	for rel, content := range files {

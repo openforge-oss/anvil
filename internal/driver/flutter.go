@@ -30,6 +30,15 @@ func (Flutter) Steps(phase Phase, opts BuildOptions) ([]Step, bool) {
 			args = append(args, "--flavor", opts.Flavor)
 		}
 		return []Step{{Name: "flutter " + strings.Join(args, " "), Argv: append([]string{"flutter"}, args...)}}, true
+	case Sign:
+		if opts.Signing.ExportPlist == "" {
+			return nil, false
+		}
+		args := []string{"build", "ipa", "--export-options-plist", opts.Signing.ExportPlist}
+		if opts.Flavor != "" {
+			args = append(args, "--flavor", opts.Flavor)
+		}
+		return []Step{{Name: "flutter " + strings.Join(args, " "), Argv: append([]string{"flutter"}, args...)}}, true
 	}
 	return nil, false
 }

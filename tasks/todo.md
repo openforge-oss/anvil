@@ -56,8 +56,24 @@ subprocess (streaming, exit codes, fail-fast), and the no-project error path.
 Signing and store upload remain for Milestones 3 and 4. iOS scheme is derived by
 convention (or `--flavor`); auto-detecting flavors and schemes is a later step.
 
-## Milestone 3: signing and upload
+## Milestone 3: signing (in progress)
 
-- [ ] Guided Android keystore and iOS provisioning/signing
+- [x] Sign phase in the driver contract; iOS sign steps on Flutter, RN, and native iOS
+- [x] `internal/sign`: keytool keystore generation, key.properties, Gradle wiring, ExportOptions.plist, gitignore
+- [x] `anvil sign` and `anvil build --sign`; `--dry-run` makes no changes
+- [x] Secrets via prompt or env (huh), never committed
+- [x] Tests: live keystore gen (keytool), gradle wiring idempotence, gitignore, ExportOptions, Step argv
+- [ ] PR into develop, CI green
+
+### Review, Milestone 3
+Android signs at build time via wired Gradle signingConfigs; iOS archives and
+exports a signed ipa. Guided setup is side-effect-free under --dry-run (a bug
+caught in review after it briefly wrote into a real project, now fixed and the
+project restored). Deferred: App Store export, App Store Connect API and
+fastlane match, OS keychain, Play enrollment, and Android apksigner for a loose
+prebuilt APK.
+
+## Milestone 4: upload
+
 - [ ] Store/registry upload (TestFlight, Play, npm)
 - [ ] GoReleaser to Homebrew/Scoop/curl distribution

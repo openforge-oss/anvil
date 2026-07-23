@@ -6,8 +6,6 @@ func (Android) Name() string { return "android" }
 
 func (Android) Steps(phase Phase, opts BuildOptions) ([]Step, bool) {
 	switch phase {
-	case Deps:
-		return nil, false
 	case Analyze:
 		return []Step{{Name: "gradlew lint", Argv: []string{gradlew(), "lint"}}}, true
 	case Test:

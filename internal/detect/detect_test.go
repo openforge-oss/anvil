@@ -149,7 +149,20 @@ func TestScan(t *testing.T) {
 		{
 			name:  "swift package library",
 			files: map[string]string{"Package.swift": "// swift-tools-version:5.9\nlet package = Package(name: \"X\", products: [.library(name: \"X\", targets: [\"X\"])])"},
-			want:  []string{".|ios|library"},
+			want:  []string{".|swift|library"},
+		},
+		{
+			name:  "swift executable package",
+			files: map[string]string{"Package.swift": "// swift-tools-version:5.9\nlet package = Package(name: \"cli\", targets: [.executableTarget(name: \"cli\")])"},
+			want:  []string{".|swift|executable"},
+		},
+		{
+			name: "kotlin jvm gradle is not android",
+			files: map[string]string{
+				"settings.gradle.kts": "rootProject.name = \"svc\"",
+				"build.gradle.kts":    "plugins { kotlin(\"jvm\") version \"2.0.0\" }",
+			},
+			want: []string{".|kotlin|jvm"},
 		},
 		{
 			name: "node_modules yields no phantom react native projects",

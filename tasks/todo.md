@@ -90,5 +90,19 @@ issues: #4, #5, #6, #9, #10.
 
 ## Milestone 4: upload
 
-- [ ] Store/registry upload (TestFlight, Play, npm)
-- [ ] GoReleaser to Homebrew/Scoop/curl distribution
+- [x] `internal/upload`: Uploader interface + iOS (altool), Android (Play API), npm
+- [x] Credential resolution (flag/env/base64-to-temp) that refuses in-repo secrets
+- [x] `anvil upload` with dry-run default (`--yes` to perform)
+- [x] GoReleaser self-distribution: `.goreleaser.yaml` + tag-triggered `release.yml`
+- [x] Tests (cred resolution, in-repo refusal, Validate, Describe); ./check + staticcheck green
+- [ ] PR into develop, CI green
+
+### Review, Milestone 4
+Upload works end to end in dry-run for all three targets (verified). Live pushes
+need real store accounts, so they are deferred; unit tests cover credential
+resolution, the in-repo refusal, and each uploader's validation and plan.
+GoReleaser was pulled into this milestone; it needs `openforge-oss/homebrew-tap`
+and `scoop-bucket` repos plus a `HOMEBREW_TAP_TOKEN` secret before the first
+release tag. Deferred: App Store submission metadata, Play staged rollout,
+fastlane back-ends, `anvil build --upload`, npm OIDC. This completes the core
+detect -> build -> sign -> upload pipeline.

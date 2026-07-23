@@ -17,8 +17,11 @@ const (
 	Analyze
 	Test
 	Build
+	Sign
 )
 
+// Phases is the default build lifecycle. Sign is intentionally excluded; it runs
+// only when explicitly requested.
 var Phases = []Phase{Deps, Analyze, Test, Build}
 
 func (p Phase) String() string {
@@ -31,6 +34,8 @@ func (p Phase) String() string {
 		return "test"
 	case Build:
 		return "build"
+	case Sign:
+		return "sign"
 	default:
 		return "unknown"
 	}
@@ -80,6 +85,16 @@ type BuildOptions struct {
 	Target  string
 	Flavor  string
 	Release bool
+	Signing Signing
+}
+
+// Signing holds resolved iOS signing inputs used by the Sign phase. Android
+// signing is arranged before Build by wiring Gradle (see internal/sign), so it
+// needs nothing here.
+type Signing struct {
+	TeamID       string
+	ExportMethod string
+	ExportPlist  string
 }
 
 type Driver interface {

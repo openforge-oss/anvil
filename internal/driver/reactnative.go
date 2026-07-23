@@ -51,6 +51,29 @@ func (r ReactNative) Steps(phase Phase, opts BuildOptions) ([]Step, bool) {
 		}
 		task := "assemble" + title(opts.Flavor) + variant
 		return []Step{{Name: "gradlew " + task, Dir: "android", Argv: []string{gradlew(), task}}}, true
+	case Sign:
+		if opts.Signing.ExportPlist == "" {
+			return nil, false
+		}
+		ws := firstGlob(filepath.Join(r.root, "ios"), "*.xcworkspace")
+		if ws == "" {
+			return nil, false
+		}
+		scheme := strings.TrimSuffix(ws, ".xcworkspace")
+		if opts.Flavor != "" {
+			scheme = opts.Flavor
+		}
+		archive := "build/anvil/" + scheme + ".xcarchive"
+		archiveArgs := []string{"xcodebuild", "-workspace", ws, "-scheme", scheme,
+			"-configuration", "Release", "-archivePath", archive, "archive", "-allowProvisioningUpdates"}
+		if opts.Signing.TeamID != "" {
+			archiveArgs = append(archiveArgs, "DEVELOPMENT_TEAM="+opts.Signing.TeamID)
+		}
+		return []Step{
+			{Name: "xcodebuild archive", Dir: "ios", Argv: archiveArgs},
+			{Name: "xcodebuild -exportArchive", Dir: "ios", Argv: []string{"xcodebuild", "-exportArchive",
+				"-archivePath", archive, "-exportPath", "build/anvil/ipa", "-exportOptionsPlist", opts.Signing.ExportPlist}},
+		}, true
 	}
 	return nil, false
 }

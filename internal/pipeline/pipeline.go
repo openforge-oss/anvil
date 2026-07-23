@@ -25,8 +25,13 @@ type Item struct {
 // Plan resolves the full ordered list of steps for a driver, inserting a skipped
 // entry for any phase the driver reports as not applicable.
 func Plan(d driver.Driver, opts driver.BuildOptions) []Item {
+	return PlanPhases(d, opts, driver.Phases)
+}
+
+// PlanPhases resolves the plan for a specific set of phases.
+func PlanPhases(d driver.Driver, opts driver.BuildOptions, phases []driver.Phase) []Item {
 	var items []Item
-	for _, ph := range driver.Phases {
+	for _, ph := range phases {
 		steps, ok := d.Steps(ph, opts)
 		if !ok || len(steps) == 0 {
 			items = append(items, Item{Phase: ph, Name: ph.String()})
@@ -69,9 +74,15 @@ type Result struct {
 // Run executes the plan for driver d rooted at root, emitting events on the
 // channel and closing it when finished. Callers read the channel concurrently.
 func Run(ctx context.Context, root string, d driver.Driver, opts driver.BuildOptions, events chan<- Event) Result {
+	return RunPhases(ctx, root, d, opts, driver.Phases, events)
+}
+
+// RunPhases executes a specific set of phases, emitting events and closing the
+// channel when finished.
+func RunPhases(ctx context.Context, root string, d driver.Driver, opts driver.BuildOptions, phases []driver.Phase, events chan<- Event) Result {
 	defer close(events)
 
-	items := Plan(d, opts)
+	items := PlanPhases(d, opts, phases)
 	events <- Event{Kind: KindPlan, Items: items}
 
 	var artifacts []string

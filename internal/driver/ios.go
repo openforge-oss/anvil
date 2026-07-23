@@ -38,6 +38,26 @@ func (d IOS) Steps(phase Phase, opts BuildOptions) ([]Step, bool) {
 			Argv: []string{"xcodebuild", "build", flag, value, "-scheme", scheme,
 				"-destination", "generic/platform=iOS Simulator", "CODE_SIGNING_ALLOWED=NO"},
 		}}, true
+	case Sign:
+		flag, value, scheme := d.container(opts)
+		if scheme == "" {
+			return nil, false
+		}
+		archive := "build/anvil/" + scheme + ".xcarchive"
+		plist := opts.Signing.ExportPlist
+		if plist == "" {
+			plist = "ExportOptions.plist"
+		}
+		archiveArgs := []string{"xcodebuild", flag, value, "-scheme", scheme,
+			"-configuration", "Release", "-archivePath", archive, "archive", "-allowProvisioningUpdates"}
+		if opts.Signing.TeamID != "" {
+			archiveArgs = append(archiveArgs, "DEVELOPMENT_TEAM="+opts.Signing.TeamID)
+		}
+		return []Step{
+			{Name: "xcodebuild archive", Argv: archiveArgs},
+			{Name: "xcodebuild -exportArchive", Argv: []string{"xcodebuild", "-exportArchive",
+				"-archivePath", archive, "-exportPath", "build/anvil/ipa", "-exportOptionsPlist", plist}},
+		}, true
 	}
 	return nil, false
 }

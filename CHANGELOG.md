@@ -7,6 +7,17 @@ All notable changes are documented here, following
 ## [Unreleased]
 
 ### Added
+- Build lifecycle and `anvil build`: runs deps, analyze, test, and an
+  unsigned/debug/simulator build for a detected project, with a live Bubble Tea
+  view and a plain non-TTY renderer. Flags `--path`, `--target`, `--flavor`,
+  `--release`, `--dry-run`, `--plain`.
+- Driver contract (`internal/driver`) and drivers for Flutter, React Native,
+  native Android, native iOS, Swift (SPM), and Kotlin/JVM, with `--flavor`
+  threaded into build and test steps.
+- Runner (`internal/pipeline`): executes steps, streams combined output, applies
+  the driver's classification, collects artifacts, and stops on first failure.
+- Detection refinement: Gradle is not always Android and `Package.swift` is
+  Swift, adding Swift and Kotlin stacks.
 - Stack detection engine (`internal/detect`): marker-file detectors for Flutter
   (vs pure Dart; app/module/plugin subtypes), React Native (bare, Expo managed,
   Expo prebuild), native Android (app vs library, KMP flag), and native iOS

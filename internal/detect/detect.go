@@ -17,6 +17,8 @@ const (
 	ReactNative Stack = "react-native"
 	Android     Stack = "android"
 	IOS         Stack = "ios"
+	Kotlin      Stack = "kotlin"
+	Swift       Stack = "swift"
 )
 
 type Project struct {
@@ -98,7 +100,13 @@ func detectDir(dir string) *Project {
 	if p := detectAndroid(dir); p != nil {
 		return p
 	}
+	if p := detectKotlin(dir); p != nil {
+		return p
+	}
 	if p := detectIOS(dir); p != nil {
+		return p
+	}
+	if p := detectSwift(dir); p != nil {
 		return p
 	}
 	return nil

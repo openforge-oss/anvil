@@ -1,0 +1,48 @@
+version: 2
+project_name: anvil
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - main: .
+    binary: anvil
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X github.com/openforge-oss/anvil/cmd.version={{ .Version }}
+    goos: [linux, darwin, windows]
+    goarch: [amd64, arm64]
+
+archives:
+  - formats: [tar.gz]
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+
+checksum:
+  name_template: checksums.txt
+
+homebrew_casks:
+  - name: anvil
+    repository:
+      owner: openforge-oss
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+    homepage: https://github.com/openforge-oss/anvil
+    description: Guided, zero-config build and release pipeline for mobile and app projects
+
+scoops:
+  - repository:
+      owner: openforge-oss
+      name: scoop-bucket
+      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+    homepage: https://github.com/openforge-oss/anvil
+    description: Guided, zero-config build and release pipeline for mobile and app projects
+
+release:
+  github:
+    owner: openforge-oss
+    name: anvil

@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Lint anvil. Uses only the Go toolchain by default; also runs golangci-lint and
+# govulncheck when they're installed (CI always runs them).
+set -uo pipefail
+cd "$(dirname "$0")"
+
+fail=0
+
+echo "→ gofmt"
+unformatted="$(gofmt -l . 2>/dev/null || true)"
+if [ -n "$unformatted" ]; then
+  echo "  not gofmt-clean:"; echo "$unformatted" | sed 's/^/    /'
+  echo "  fix with: gofmt -w ."
+  fail=1
+fi
+
+echo "→ go vet"
+go vet ./... || fail=1
+
+if command -v staticcheck >/dev/null 2>&1; then
+  echo "→ staticcheck"
+  staticcheck ./... || fail=1
+else
+  echo "→ staticcheck (skipped — not installed; CI runs it via 'go run')"
+fi
+
+if command -v govulncheck >/dev/null 2>&1; then
+  echo "→ govulncheck"
+  govulncheck ./... || fail=1
+else
+  echo "→ govulncheck (skipped — not installed; CI runs it)"
+fi
+
+[ "$fail" -eq 0 ] && echo "✓ lint passed"
+exit "$fail"

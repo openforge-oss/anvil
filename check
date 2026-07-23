@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# The one command to run before pushing: lint + test.
+set -euo pipefail
+cd "$(dirname "$0")"
+./lint
+./test
+echo "✓ check passed"

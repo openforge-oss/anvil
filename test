@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Run the test suite with the race detector and coverage. Extra args pass through
+# (e.g. ./test -run TestFoo ./cmd).
+set -euo pipefail
+cd "$(dirname "$0")"
+echo "→ go test (race + coverage)"
+go test ./... -race -cover "$@"

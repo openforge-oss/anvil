@@ -1,0 +1,16 @@
+# Optional convenience wrapper for https://taskfile.dev — the shell scripts
+# (./check, ./lint, ./test, ./build) are the source of truth and need only Go.
+version: "3"
+tasks:
+  lint:
+    desc: Format check + go vet (+ golangci-lint/govulncheck if installed)
+    cmds: ["./lint"]
+  test:
+    desc: Run tests with the race detector and coverage
+    cmds: ["./test"]
+  check:
+    desc: Lint + test — run this before pushing
+    cmds: ["./check"]
+  build:
+    desc: Build the anvil binary into ./bin
+    cmds: ["./build"]

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Build the anvil binary into ./bin. Pass GORELEASE=vX.Y.Z to stamp the version.
+set -euo pipefail
+cd "$(dirname "$0")"
+mkdir -p bin
+ldflags=""
+if [ -n "${GORELEASE:-}" ]; then
+  ldflags="-X github.com/openforge-oss/anvil/cmd.version=${GORELEASE}"
+fi
+go build -ldflags "$ldflags" -o bin/anvil .
+echo "✓ built bin/anvil"

@@ -1,0 +1,16 @@
+# Build output
+/bin/
+/dist/
+*.exe
+
+# Test / coverage
+*.test
+*.out
+coverage.*
+
+# Local caches (incl. the Stop-hook fingerprint)
+.cache/
+
+# OS / editor
+.DS_Store
+Thumbs.db

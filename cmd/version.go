@@ -1,10 +1,27 @@
 package cmd
 
-import "runtime/debug"
+import (
+	"fmt"
+	"runtime/debug"
+
+	"github.com/spf13/cobra"
+)
 
 // version is injected at release time via -ldflags "-X ...cmd.version=vX.Y.Z".
-// For `go install`ed or `go run` builds it falls back to the module build info.
 var version = "dev"
+
+var versionCmd = &cobra.Command{
+	Use:   "version",
+	Short: "Print the anvil version",
+	Args:  cobra.NoArgs,
+	Run: func(cmd *cobra.Command, _ []string) {
+		fmt.Fprintln(cmd.OutOrStdout(), versionString())
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(versionCmd)
+}
 
 func versionString() string {
 	if version != "dev" {

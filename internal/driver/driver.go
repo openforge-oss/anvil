@@ -121,11 +121,6 @@ func fileExists(path string) bool {
 	return err == nil && !info.IsDir()
 }
 
-func dirExists(path string) bool {
-	info, err := os.Stat(path)
-	return err == nil && info.IsDir()
-}
-
 func firstGlob(dir, pattern string) string {
 	matches, err := filepath.Glob(filepath.Join(dir, pattern))
 	if err != nil || len(matches) == 0 {

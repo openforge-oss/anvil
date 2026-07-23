@@ -7,6 +7,13 @@ All notable changes are documented here, following
 ## [Unreleased]
 
 ### Added
+- Go and web/Node stacks (detector + driver, no new dependencies). Go: `go.mod`
+  detection (app vs library), running `go mod download`, `go vet` + `gofmt -l`,
+  `go test`, `go build`. Web/Node: framework detection (Next, Nuxt, SvelteKit,
+  Angular, Vite, CRA, Vue, Svelte, Astro, Remix, Gatsby), deps by lockfile, lint,
+  test (jest/vitest/script), and build via the package.json build script.
+  Monorepo roots (workspaces, pnpm, lerna, nx) are descended into so members
+  still surface, and a single-package Turbo repo is treated as a leaf.
 - Guided release signing: `anvil sign` and `anvil build --sign`, a Sign phase
   that runs after Build. Android setup generates a PKCS12 keystore with keytool,
   writes key.properties, wires Gradle signingConfigs, and gitignores the secrets,

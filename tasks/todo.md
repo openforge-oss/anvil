@@ -73,6 +73,21 @@ project restored). Deferred: App Store export, App Store Connect API and
 fastlane match, OS keychain, Play enrollment, and Android apksigner for a loose
 prebuilt APK.
 
+## Milestone 5: breadth, Go and web/Node (in progress)
+
+- [x] detect: Go (go.mod, app/library) and Web (framework/app/library; workspace roots descend)
+- [x] drivers: Go (deps, vet + gofmt, test, build; Analyze classify for gofmt) and Web (install, lint, test, build via package-manager scripts)
+- [x] jsInstall Yarn Berry (`--immutable`); `pmRun` helper; framework output dirs added to skip list
+- [x] Tests (Go app/library/cmd/go.work; web frameworks; workspace-root and bare not claimed); ./check + staticcheck green
+- [x] Verified: anvil self-detects as go/app; build --dry-run shows the Go pipeline
+- [ ] PR into develop, CI green
+
+### Review, Milestone 5
+anvil now spans eight stacks. Go and web reuse the detector+driver contract with
+no new dependencies. Web detection descends into monorepo roots so members still
+surface, and treats a single-package Turbo repo as a leaf. Remaining polish
+issues: #4, #5, #6, #9, #10.
+
 ## Milestone 4: upload
 
 - [ ] Store/registry upload (TestFlight, Play, npm)

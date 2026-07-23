@@ -81,6 +81,9 @@ func (r ReactNative) Steps(phase Phase, opts BuildOptions) ([]Step, bool) {
 func jsInstall(root string) Step {
 	switch {
 	case fileExists(filepath.Join(root, "yarn.lock")):
+		if isYarnBerry(root) {
+			return Step{Name: "yarn install", Argv: []string{"yarn", "install", "--immutable"}}
+		}
 		return Step{Name: "yarn install", Argv: []string{"yarn", "install", "--frozen-lockfile"}}
 	case fileExists(filepath.Join(root, "pnpm-lock.yaml")):
 		return Step{Name: "pnpm install", Argv: []string{"pnpm", "install", "--frozen-lockfile"}}
@@ -89,6 +92,18 @@ func jsInstall(root string) Step {
 	default:
 		return Step{Name: "npm install", Argv: []string{"npm", "install"}}
 	}
+}
+
+func isYarnBerry(root string) bool {
+	if fileExists(filepath.Join(root, ".yarnrc.yml")) {
+		return true
+	}
+	data, err := os.ReadFile(filepath.Join(root, "package.json"))
+	if err != nil {
+		return false
+	}
+	s := string(data)
+	return strings.Contains(s, "\"packageManager\"") && strings.Contains(s, "yarn@") && !strings.Contains(s, "yarn@1")
 }
 
 func hasEslint(root string) bool {

@@ -19,6 +19,8 @@ const (
 	IOS         Stack = "ios"
 	Kotlin      Stack = "kotlin"
 	Swift       Stack = "swift"
+	Go          Stack = "go"
+	Web         Stack = "web"
 )
 
 type Project struct {
@@ -39,6 +41,7 @@ func DefaultSkipDirs() map[string]bool {
 		"node_modules", ".git", "build", ".gradle", ".dart_tool", "Pods",
 		"DerivedData", ".expo", ".idea", ".fvm", ".symlinks", "Carthage",
 		".build", "out", "dist", "vendor", ".cxx",
+		".next", ".output", ".svelte-kit", ".nuxt", ".angular", ".astro", ".turbo",
 	}
 	m := make(map[string]bool, len(names))
 	for _, n := range names {
@@ -107,6 +110,12 @@ func detectDir(dir string) *Project {
 		return p
 	}
 	if p := detectSwift(dir); p != nil {
+		return p
+	}
+	if p := detectGo(dir); p != nil {
+		return p
+	}
+	if p := detectWeb(dir); p != nil {
 		return p
 	}
 	return nil

@@ -10,7 +10,7 @@ High-level phases and status, for monitoring. Granular tasks live in
 | 2. Guided build | Driver lifecycle (deps, analyze, test, build) for all six stacks; `--flavor`; interactive TUI plus plain fallback; `anvil build` | in progress |
 | 3. Signing | Guided Android keystore and iOS provisioning/signing | in progress |
 | 4. Upload | TestFlight, Play, npm upload; GoReleaser distribution (Homebrew, Scoop, curl) | planned |
-| 5. Breadth | More ecosystems (web, Go) via new drivers; flavor auto-detection; `--explain` educational mode | future |
+| 5. Breadth | More ecosystems (Go, web) via new drivers; flavor auto-detection; `--explain` educational mode | in progress |
 
 Swift (SPM) and Kotlin/JVM drivers and `--flavor` were pulled forward into
 Milestone 2.

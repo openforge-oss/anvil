@@ -7,15 +7,13 @@ All notable changes are documented here, following
 ## [Unreleased]
 
 ### Added
-- Upload: `anvil upload` pushes a signed artifact to its store. iOS via
-  `xcrun altool` to App Store Connect/TestFlight, Android via the Google Play
-  Publisher API (insert edit, upload bundle, assign track, commit) using a
-  service account, and npm via `npm publish`. Credentials come from flags, env,
-  or a base64 env decoded to a temp file; a credential inside the repo is
-  refused; uploads are a dry run unless `--yes`.
-- Self-distribution: a GoReleaser config and a tag-triggered release workflow
-  that build cross-platform binaries and publish a GitHub release plus Homebrew
-  (cask) and Scoop manifests.
+- Go and web/Node stacks (detector + driver, no new dependencies). Go: `go.mod`
+  detection (app vs library), running `go mod download`, `go vet` + `gofmt -l`,
+  `go test`, `go build`. Web/Node: framework detection (Next, Nuxt, SvelteKit,
+  Angular, Vite, CRA, Vue, Svelte, Astro, Remix, Gatsby), deps by lockfile, lint,
+  test (jest/vitest/script), and build via the package.json build script.
+  Monorepo roots (workspaces, pnpm, lerna, nx) are descended into so members
+  still surface, and a single-package Turbo repo is treated as a leaf.
 - Guided release signing: `anvil sign` and `anvil build --sign`, a Sign phase
   that runs after Build. Android setup generates a PKCS12 keystore with keytool,
   writes key.properties, wires Gradle signingConfigs, and gitignores the secrets,

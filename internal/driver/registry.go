@@ -18,6 +18,10 @@ func For(stack detect.Stack, root string) (Driver, bool) {
 		return Kotlin{base{root}}, true
 	case detect.Swift:
 		return Swift{base{root}}, true
+	case detect.Go:
+		return Go{base{root}}, true
+	case detect.Web:
+		return Web{base{root}}, true
 	default:
 		return nil, false
 	}

@@ -9,6 +9,8 @@ import (
 type packageJSON struct {
 	Dependencies    map[string]string `json:"dependencies"`
 	DevDependencies map[string]string `json:"devDependencies"`
+	Scripts         map[string]string `json:"scripts"`
+	Workspaces      json.RawMessage   `json:"workspaces"`
 }
 
 func detectReactNative(dir string) *Project {

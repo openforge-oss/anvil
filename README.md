@@ -45,6 +45,19 @@ Gatsby). Adding another is one driver. See
 
 anvil is a single static binary.
 
+### Homebrew (macOS and Linux)
+
+```bash
+brew install --cask openforge-oss/tap/anvil
+```
+
+### Scoop (Windows)
+
+```powershell
+scoop bucket add openforge-oss https://github.com/openforge-oss/scoop-bucket
+scoop install anvil
+```
+
 ### Prebuilt binary
 
 Download the archive for your OS and architecture from the
@@ -57,7 +70,7 @@ it, and put `anvil` on your `PATH`.
 go install github.com/openforge-oss/anvil@latest
 ```
 
-Homebrew and Scoop distribution is wired and lands in the next release.
+Installs to `$(go env GOPATH)/bin`, which must be on your `PATH`.
 
 ## Usage
 

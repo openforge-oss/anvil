@@ -6,6 +6,11 @@ All notable changes are documented here, following
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-07-24
+
+First tagged release. Distributed as prebuilt binaries, a Homebrew cask, a Scoop
+manifest, and `go install`.
+
 ### Added
 - Go and web/Node stacks (detector + driver, no new dependencies). Go: `go.mod`
   detection (app vs library), running `go mod download`, `go vet` + `gofmt -l`,

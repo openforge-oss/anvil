@@ -31,6 +31,7 @@ homebrew_casks:
       owner: openforge-oss
       name: homebrew-tap
       token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+    skip_upload: "{{ if .Env.HOMEBREW_TAP_TOKEN }}false{{ else }}true{{ end }}"
     homepage: https://github.com/openforge-oss/anvil
     description: Guided, zero-config build and release pipeline for mobile and app projects
 
@@ -39,6 +40,7 @@ scoops:
       owner: openforge-oss
       name: scoop-bucket
       token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+    skip_upload: "{{ if .Env.HOMEBREW_TAP_TOKEN }}false{{ else }}true{{ end }}"
     homepage: https://github.com/openforge-oss/anvil
     description: Guided, zero-config build and release pipeline for mobile and app projects
 

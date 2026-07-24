@@ -5,52 +5,87 @@
 **A guided, zero-config build and release pipeline for mobile and app projects.**
 
 One command detects the stack, fetches dependencies, analyzes, surfaces errors,
-tests, and builds (then signs and uploads), without memorizing each framework's CLI.
+tests, builds, signs, and uploads, without memorizing each framework's CLI.
 
 [![CI](https://github.com/openforge-oss/anvil/actions/workflows/ci.yml/badge.svg)](https://github.com/openforge-oss/anvil/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/openforge-oss/anvil?sort=semver)](https://github.com/openforge-oss/anvil/releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-![status](https://img.shields.io/badge/status-early%20development-orange)
 
 Part of [OpenForge](https://github.com/openforge-oss).
 
 </div>
 
-## Status
+## What it does
 
-Early development, Milestone 1 (detection engine). The CLI can detect a project's
-stack; the build lifecycle comes next. Track progress in
-[`tasks/todo.md`](tasks/todo.md) and [`docs/ROADMAP.md`](docs/ROADMAP.md).
-
-## The problem
-
-Shipping a mobile or app build is a fiddly, error-prone grind: Gradle and AGP
-version matrices, the CocoaPods to Swift Package Manager migration, iOS
-provisioning and code signing, and per-stack build commands nobody remembers.
-Existing tools either need config and a cloud account (fastlane, Codemagic), only
-output server containers (Nixpacks, buildpacks), or are heavy monorepo build
-systems (Nx, Bazel). None is a local, zero-config, auto-detecting, guided CLI
-that produces mobile artifacts.
-
-## The idea
+Point anvil at a project and it works out the stack, then runs the right
+lifecycle: dependencies, static analysis, tests, build, and (where set up)
+signing and store upload. It prints every command it runs, so it is also a way to
+learn the underlying tools instead of hiding them.
 
 ```console
-$ anvil ship          # (planned)
-Detected: Flutter app (android, ios)
+$ anvil detect
+PATH  STACK    SUBTYPE  CONFIDENCE
+.     flutter  app      0.98
+
+$ anvil build
 flutter pub get       ok
 flutter analyze       0 issues
 flutter test          42 passed
-Build target? Android App Bundle (.aab) / iOS Archive (.ipa) / Both
-...
+flutter build appbundle
 ```
 
-Auto-detect the stack, run the right lifecycle, explain failures in plain
-language, and (later) walk you through signing and store upload. It graduates
-beginners by printing the exact commands it runs.
+### Supported stacks
 
-- v1 stacks: Flutter, React Native, native Android, native iOS.
-- Built in Go (single static binary; nothing to install but the binary).
-- Pluggable: adding a framework means adding one driver. See
-  [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+Flutter, React Native, native Android, native iOS, Swift, Kotlin/JVM, Go, and
+web/Node (Next, Nuxt, SvelteKit, Angular, Vite, CRA, Vue, Svelte, Astro, Remix,
+Gatsby). Adding another is one driver. See
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+
+## Install
+
+anvil is a single static binary.
+
+### Prebuilt binary
+
+Download the archive for your OS and architecture from the
+[latest release](https://github.com/openforge-oss/anvil/releases/latest), extract
+it, and put `anvil` on your `PATH`.
+
+### Go
+
+```bash
+go install github.com/openforge-oss/anvil@latest
+```
+
+Homebrew and Scoop distribution is wired and lands in the next release.
+
+## Usage
+
+```bash
+anvil detect                       # identify the project and its stack
+anvil build                        # deps, analyze, test, build (guided)
+anvil build --release --flavor prod
+anvil sign                         # set up Android or iOS signing
+anvil build --sign                 # build and sign
+anvil upload                       # dry-run by default, pass --yes to perform
+```
+
+Useful flags: `--path` (project directory), `--target` (android or ios),
+`--flavor`, `--release`, `--dry-run` (print the plan without running it), and
+`--plain` (no TUI, for CI). Every command has `--help`.
+
+anvil never puts secrets on the command line or in the repo. Keystore and store
+credentials come from a prompt or an environment variable, and a credential
+located inside the working tree is refused.
+
+## The problem
+
+Shipping a build is a fiddly, error-prone grind: Gradle and AGP version matrices,
+the CocoaPods to Swift Package Manager migration, iOS provisioning and code
+signing, and per-stack commands nobody remembers. Existing tools either need
+config and a cloud account (fastlane, Codemagic), only output server containers
+(Nixpacks, buildpacks), or are heavy monorepo build systems (Nx, Bazel). anvil is
+a local, zero-config, auto-detecting, guided CLI that produces real artifacts.
 
 ## Contributing
 
@@ -62,6 +97,9 @@ test) before every push.
 ./check    # gofmt, go vet, staticcheck/govulncheck, go test -race
 ./build    # produces bin/anvil
 ```
+
+Progress lives in [`tasks/todo.md`](tasks/todo.md) and
+[`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ## License
 

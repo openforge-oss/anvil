@@ -112,4 +112,11 @@ detect -> build -> sign -> upload pipeline.
 - [x] Add mutually exclusive `anvil build --until <phase>` and `--only <phase>` flags.
 - [x] Validate phase names and filter the selected driver's plan before dry-run or execution.
 - [x] Cover inclusive prefix selection, single-phase selection, invalid values, and conflicting flags.
-- [ ] Run `./check`, review the focused diff, and open a pull request into `develop`.
+- [x] Run `./check`, review the focused diff, and open a pull request into `develop`.
+
+### Review, Issue 9
+
+Phase selection is validated once at the command boundary and feeds both dry-run output and real
+execution. Focused tests cover prefixes, single phases, invalid values, conflicts, and optional
+signing. `./check`, the binary build, staticcheck, and direct CLI dry runs pass. Pull request #20
+targets `develop`.

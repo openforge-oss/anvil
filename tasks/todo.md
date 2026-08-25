@@ -106,3 +106,10 @@ and `scoop-bucket` repos plus a `HOMEBREW_TAP_TOKEN` secret before the first
 release tag. Deferred: App Store submission metadata, Play staged rollout,
 fastlane back-ends, `anvil build --upload`, npm OIDC. This completes the core
 detect -> build -> sign -> upload pipeline.
+
+## Issue 9: lifecycle phase selection
+
+- [x] Add mutually exclusive `anvil build --until <phase>` and `--only <phase>` flags.
+- [x] Validate phase names and filter the selected driver's plan before dry-run or execution.
+- [x] Cover inclusive prefix selection, single-phase selection, invalid values, and conflicting flags.
+- [ ] Run `./check`, review the focused diff, and open a pull request into `develop`.

@@ -26,6 +26,8 @@ var (
 	buildSign    bool
 	buildDryRun  bool
 	buildPlain   bool
+	buildUntil   string
+	buildOnly    string
 )
 
 var buildCmd = &cobra.Command{
@@ -43,10 +45,16 @@ func init() {
 	buildCmd.Flags().BoolVar(&buildSign, "sign", false, "set up signing and produce a signed artifact")
 	buildCmd.Flags().BoolVar(&buildDryRun, "dry-run", false, "print the steps without running them")
 	buildCmd.Flags().BoolVar(&buildPlain, "plain", false, "plain line output instead of the interactive view")
+	buildCmd.Flags().StringVar(&buildUntil, "until", "", "run through this lifecycle phase")
+	buildCmd.Flags().StringVar(&buildOnly, "only", "", "run only this lifecycle phase")
 	rootCmd.AddCommand(buildCmd)
 }
 
 func runBuild(cmd *cobra.Command, _ []string) error {
+	if buildUntil != "" && buildOnly != "" {
+		return errors.New("--until and --only cannot be used together")
+	}
+
 	chosen, err := resolveProject(cmd, buildPath)
 	if err != nil {
 		return err
@@ -68,11 +76,45 @@ func runBuild(cmd *cobra.Command, _ []string) error {
 		phases = append(append([]driver.Phase{}, driver.Phases...), extra...)
 	}
 
+	phases, err = selectBuildPhases(phases, buildUntil, buildOnly)
+	if err != nil {
+		return err
+	}
+
 	if buildDryRun {
 		printPlan(cmd, chosen, d, opts, phases)
 		return nil
 	}
 	return runPipeline(cmd, chosen.Path, d, opts, phases)
+}
+
+func selectBuildPhases(available []driver.Phase, until, only string) ([]driver.Phase, error) {
+	if until != "" && only != "" {
+		return nil, errors.New("--until and --only cannot be used together")
+	}
+	if until == "" && only == "" {
+		return append([]driver.Phase{}, available...), nil
+	}
+
+	selected := only
+	if selected == "" {
+		selected = until
+	}
+	for idx, phase := range available {
+		if phase.String() != selected {
+			continue
+		}
+		if only != "" {
+			return []driver.Phase{phase}, nil
+		}
+		return append([]driver.Phase{}, available[:idx+1]...), nil
+	}
+
+	names := make([]string, len(available))
+	for idx, phase := range available {
+		names[idx] = phase.String()
+	}
+	return nil, fmt.Errorf("unknown phase %q; available phases: %s", selected, strings.Join(names, ", "))
 }
 
 func resolveProject(cmd *cobra.Command, path string) (detect.Project, error) {

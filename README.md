@@ -78,14 +78,18 @@ Installs to `$(go env GOPATH)/bin`, which must be on your `PATH`.
 anvil detect                       # identify the project and its stack
 anvil build                        # deps, analyze, test, build (guided)
 anvil build --release --flavor prod
+anvil build --until analyze        # deps, then analyze
+anvil build --only test            # test phase only
 anvil sign                         # set up Android or iOS signing
 anvil build --sign                 # build and sign
 anvil upload                       # dry-run by default, pass --yes to perform
 ```
 
 Useful flags: `--path` (project directory), `--target` (android or ios),
-`--flavor`, `--release`, `--dry-run` (print the plan without running it), and
-`--plain` (no TUI, for CI). Every command has `--help`.
+`--flavor`, `--release`, `--until` (inclusive lifecycle prefix), `--only` (one
+lifecycle phase), `--dry-run` (print the plan without running it), and `--plain`
+(no TUI, for CI). `--until` and `--only` are mutually exclusive. Every command
+has `--help`.
 
 anvil never puts secrets on the command line or in the repo. Keystore and store
 credentials come from a prompt or an environment variable, and a credential
